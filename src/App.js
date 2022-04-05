@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import Login from "./pages/loginPage";
+import SignUp from "./pages/signUpPage";
+import Dashboard from "./pages/dashboardPage";
+import {
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+        <Route path="/register" component={SignUp} />
+        <Route path="/login" component={Login} />
+        <PrivateRoute path="/dashboard">
+          <Dashboard />
+        </PrivateRoute>
+        <Route exact path="/" component={Login} />
+    </Routes>
   );
 }
+
+const PrivateRoute = ({ children, ...rest }) => {
+  const authenticated = localStorage.getItem("authenticated");
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        authenticated ? (
+          children
+        ) : (
+          <Navigate
+            to={{
+              pathname: "/login",
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
+  );
+};
 
 export default App;
